@@ -1,0 +1,41 @@
+{
+  "name": "hotel booking api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed": "node scripts/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@graphql-tools/merge": "^9.0.24",
+    "@graphql-tools/schema": "^10.0.23",
+    "@graphql-tools/utils": "^10.8.6",
+    "@graphql-yoga/node": "^3.9.1",
+    "apollo-server-express": "^3.13.0",
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "google-auth-library": "^9.15.1",
+    "graphql": "^16.11.0",
+    "graphql-http": "^1.22.4",
+    "graphql-tag": "^2.12.6",
+    "graphql-upload": "^13.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.0",
+    "nodemailer": "^7.0.3",
+    "paystack": "^2.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
