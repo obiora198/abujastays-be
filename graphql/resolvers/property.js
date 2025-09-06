@@ -1,34 +1,54 @@
-const Property = require('../../models/Property');
-const { AuthenticationError, UserInputError } = require('apollo-server-express');
-const { handleFileUpload } = require('../../utils/fileUpload');
+const Property = require("../../models/Property");
+const {
+  AuthenticationError,
+  UserInputError,
+} = require("apollo-server-express");
+const { handleFileUpload } = require("../../utils/fileUpload");
 
 module.exports = {
   Query: {
     properties: async (_, { location, maxPrice }) => {
       const query = {};
-      
+
       if (location) {
-        query.location = { $regex: location, $options: 'i' };
+        query.location = { $regex: location, $options: "i" };
       }
-      
+
       if (maxPrice) {
         query.pricePerNight = { $lte: maxPrice };
       }
-      
-      return Property.find(query)
-        .populate('owner')
-        .populate({
-          path: 'reviews',
-          select: 'id rating'
-        });
+
+      return Property.find(query).populate("owner").populate({
+        path: "reviews",
+        select: "id rating",
+      });
     },
-    property: (_, { id }) => Property.findById(id).populate('owner'),
+    property: async (_, { id }) => {
+      const property = await Property.findById(id)
+        .populate("owner")
+        .populate({
+          path: "reviews",
+          populate: {
+            path: "user",
+            select: "name avatar",
+          },
+        })
+        .lean() // Convert to plain JavaScript object
+        .exec();
+
+      if (!property) {
+        throw new UserInputError("Property not found");
+      }
+
+      return property;
+    },
     propertiesByOwner: (_, { ownerId }) => Property.find({ owner: ownerId }),
   },
 
   Mutation: {
     createProperty: async (_, args, { user }) => {
-      if (!user || user.role !== 'manager') throw new AuthenticationError('Only managers can create properties');
+      if (!user || user.role !== "manager")
+        throw new AuthenticationError("Only managers can create properties");
 
       const { name, location, description, pricePerNight, images } = args;
 
@@ -37,7 +57,7 @@ module.exports = {
 
       if (images && images.length) {
         for (const image of images) {
-          const { url } = await handleFileUpload(image, 'properties');
+          const { url } = await handleFileUpload(image, "properties");
           uploadedImages.push(url);
         }
       }
@@ -56,13 +76,14 @@ module.exports = {
 
     updateProperty: async (_, { id, ...updates }, { user }) => {
       const property = await Property.findById(id);
-      if (!property) throw new UserInputError('Property not found');
-      if (String(property.owner) !== user.userId) throw new AuthenticationError('Forbidden');
+      if (!property) throw new UserInputError("Property not found");
+      if (String(property.owner) !== user.userId)
+        throw new AuthenticationError("Forbidden");
 
       if (updates.images) {
         const uploadedImages = [];
         for (const image of updates.images) {
-          const { url } = await handleFileUpload(image, 'properties');
+          const { url } = await handleFileUpload(image, "properties");
           uploadedImages.push(url);
         }
         updates.images = uploadedImages;
@@ -76,8 +97,9 @@ module.exports = {
 
     deleteProperty: async (_, { id }, { user }) => {
       const property = await Property.findById(id);
-      if (!property) throw new UserInputError('Property not found');
-      if (String(property.owner) !== user.userId) throw new AuthenticationError('Forbidden');
+      if (!property) throw new UserInputError("Property not found");
+      if (String(property.owner) !== user.userId)
+        throw new AuthenticationError("Forbidden");
 
       await property.deleteOne();
       return true;
@@ -85,8 +107,10 @@ module.exports = {
   },
 
   Property: {
-    owner: (parent) => require('../../models/User').findById(parent.owner),
-    bookings: (parent) => require('../../models/Booking').find({ property: parent._id }),
-    reviews: (parent) => require('../../models/Review').find({ property: parent._id }),
+    owner: (parent) => require("../../models/User").findById(parent.owner),
+    bookings: (parent) =>
+      require("../../models/Booking").find({ property: parent._id }),
+    reviews: (parent) =>
+      require("../../models/Review").find({ property: parent._id }),
   },
 };
