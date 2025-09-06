@@ -24,7 +24,7 @@ class EmailService {
         subject: 'Verify your email address',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Welcome to Abuja Booking</h2>
+            <h2>Welcome to Abuja Stays</h2>
             <p>Use the following code to verify your email address:</p>
             <div style="font-size: 24px; text-align: center; margin: 20px 0; letter-spacing: 4px;">
               <strong>${code}</strong>
@@ -146,7 +146,7 @@ class EmailService {
             </div>
             
             <div style="background-color: #333; color: white; padding: 20px; text-align: center;">
-              <p style="margin: 0; font-size: 12px;">© 2024 Abuja Booking. All rights reserved.</p>
+              <p style="margin: 0; font-size: 12px;">© 2024 Abuja Stays. All rights reserved.</p>
             </div>
           </div>
         `,
@@ -215,7 +215,7 @@ class EmailService {
             </div>
             
             <div style="background-color: #333; color: white; padding: 20px; text-align: center;">
-              <p style="margin: 0; font-size: 12px;">© 2024 Abuja Booking. All rights reserved.</p>
+              <p style="margin: 0; font-size: 12px;">© 2024 Abuja Stays. All rights reserved.</p>
             </div>
           </div>
         `,
